@@ -30,7 +30,9 @@ while True:
         
         new_cashbacks = cashback_scrapper.get_new_cashbacks()
         if new_cashbacks:
-            print(f"NEW: {new_cashbacks}")
+            for partnership_id, cashback in new_cashbacks.items():
+                print(f"{partnership_id}: {cashback["global_value"], cashback["max_value"]}")
+            
             db.update_old_cashbacks_date_end(cashback_scrapper.old_cashbacks)
             db.add_cashbacks(new_cashbacks.values())
             last_update_time = current_time
@@ -50,12 +52,3 @@ while True:
         print(f"Main loop erro: {e}")
         time.sleep(30)
         continue
-        
-    
-    
-    
-    
-
-
-
-

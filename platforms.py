@@ -25,8 +25,8 @@ class Platform:
         else:
             global_value = cls._get_global_value(soup)
             max_value = global_value
-            
-        if not global_value:
+        
+        if global_value == None:
             return None
         
         cashback = {
@@ -60,22 +60,28 @@ class Platform:
         try:
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
-                
-                context = browser.new_context(
-                    user_agent = cls._get_headers()["User-Agent"]
-                )
-                
-                page = context.new_page()
                 try:
-                    page.goto(url, wait_until="load", timeout=5000)
-                    content = page.content()
-                except Exception as e:
-                    content = page.content() 
+                
+                    context = browser.new_context(
+                        user_agent = cls._get_headers()["User-Agent"]
+                    )
+                    
+                    page = context.new_page()
+                    try:
+                        page.goto(url, wait_until="load", timeout=5000)
+                    except Exception as e:
+                        pass
+                    
+                    content = page.inner_html("body") 
+                    
+                    page.close()
+                    context.close()
                 finally:
                     browser.close()
             
             return MockResponse(content)
-        except:
+        except Exception as e:
+            print(f"Playwright erro ({cls.NAME}): {e}")
             return None
         
     @classmethod
@@ -84,7 +90,7 @@ class Platform:
         return headers
         
     @classmethod
-    def _get_global_value(cls, soup):
+    def _get_global_value(cls, soup):        
         selector = cls._get_global_value_selector()
         container = soup.select_one(selector)
         if not container:
@@ -254,5 +260,12 @@ platforms_list = [
 ]
 
 if __name__ == "__main__":
-    url = "https://megabonus.com/br/pt/shop/wwwcentaurocombr"
-    print(Megabonus.scrap_cashback(url))
+    urls = [
+        "https://cashback.opera.com/br/shops/shopee",
+        "https://cashback.opera.com/br/shops/lg",
+        "https://cashback.opera.com/br/shops/casasbahia",
+        "https://cashback.opera.com/br/shops/aliexpress"
+    ]
+    for url in urls:
+        result = Opera.scrap_cashback(url)
+        print(f"\n{url} {result}")
