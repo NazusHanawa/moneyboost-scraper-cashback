@@ -11,6 +11,8 @@ class Platform:
     @classmethod
     def scrap_cashback(cls, url):
         soup = cls._get_soup(url)
+        if not soup:
+            return None
         
         description = cls._get_description(soup)
         cashback_values = None
@@ -21,8 +23,11 @@ class Platform:
             global_value = min(cashback_values)
             max_value = max(cashback_values)
         else:
-            global_value = cls._get_global_value(soup) or 0
+            global_value = cls._get_global_value(soup)
             max_value = global_value
+            
+        if not global_value:
+            return None
         
         cashback = {
             "global_value": global_value,
@@ -49,19 +54,28 @@ class Platform:
         
     @classmethod
     def _get_js_response(cls, url):
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                
+                context = browser.new_context(
+                    user_agent = cls._get_headers()["User-Agent"]
+                )
+                
+                page = context.new_page()
+                try:
+                    page.goto(url, wait_until="load", timeout=5000)
+                    content = page.content()
+                except TimeoutError:
+                    content = page.content() 
+                except Exception as e:
+                    print(f"Playwright erro: {e}")
+                finally:
+                    browser.close()
             
-            context = browser.new_context(
-                user_agent = cls._get_headers()["User-Agent"]
-            )
-            
-            page = context.new_page()
-            page.goto(url, wait_until="load", timeout=5000)
-            content = page.content()
-            browser.close()
-        
-        return MockResponse(content)
+            return MockResponse(content)
+        except:
+            return None
         
     @classmethod
     def _get_headers(cls):
@@ -78,7 +92,7 @@ class Platform:
         value_str = container.get_text(strip=True)
         values = cls._get_all_values(value_str)
         if not values:
-            return None
+            return 0
         
         return max(values)
 
@@ -111,10 +125,6 @@ class Platform:
     @classmethod
     def _get_description_selector(cls):
         pass
-
-class Name(Platform):
-    ...
-
 
 class Meliuz(Platform):
     NAME = "Meliuz"
@@ -238,7 +248,7 @@ platforms_list = [
     Zoom,
     MyCashBack,
     Letyshops,
-    # Opera,
+    Opera,
     Megabonus
 ]
 
