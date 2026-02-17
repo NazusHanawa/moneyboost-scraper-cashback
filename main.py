@@ -1,5 +1,6 @@
 import os
 import time
+import sys
 
 from dotenv import load_dotenv
 from database import DB
@@ -39,7 +40,12 @@ while True:
             last_update_time = current_time
             
     except KeyboardInterrupt:
-        break
+        try:
+            db.connection.close()
+        except:
+            pass
+        sys.exit(0)
+        
     except Exception as e:
         print(f"Main loop erro: {e}")
         time.sleep(30)
