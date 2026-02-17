@@ -39,6 +39,9 @@ class Platform:
     @classmethod
     def _get_soup(cls, url):
         response = cls._get_response(url)
+        if not response:
+            return None
+        
         soup = BeautifulSoup(response.text, "html.parser")
         return soup
     
@@ -66,10 +69,8 @@ class Platform:
                 try:
                     page.goto(url, wait_until="load", timeout=5000)
                     content = page.content()
-                except TimeoutError:
-                    content = page.content() 
                 except Exception as e:
-                    print(f"Playwright erro: {e}")
+                    content = page.content() 
                 finally:
                     browser.close()
             

@@ -23,15 +23,14 @@ class CashbackScraper:
             
             old_cashback = self.old_cashbacks.get(partnership_id)
             if old_cashback:
-                if cashback:
-                    same_global_value = old_cashback["global_value"] == cashback["global_value"]
-                    same_max_value = old_cashback["max_value"] == cashback["max_value"]
-                    if same_global_value and same_max_value:
-                        continue
+                same_global_value = old_cashback["global_value"] == cashback["global_value"]
+                same_max_value = old_cashback["max_value"] == cashback["max_value"]
+                if same_global_value and same_max_value:
+                    continue
 
             new_cashbacks[partnership_id] = cashback.copy()
             
-        self.old_cashbacks = cashbacks
+        self.old_cashbacks.update(new_cashbacks)
         return new_cashbacks
         
     @timer
