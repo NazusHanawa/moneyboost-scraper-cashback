@@ -20,7 +20,7 @@ cashback_scrapper = CashbackScraper(partnerships, platforms_list, last_cashbacks
 first_time = time.time()
 last_update_time = 0
 scrap_count = 0
-UPDATE_TIME = 3600
+UPDATE_TIME = 360
 
 while True:
     try:
@@ -37,8 +37,15 @@ while True:
             db.add_cashbacks(new_cashbacks.values())
             last_update_time = current_time
         elif current_time - last_update_time >= UPDATE_TIME:
-            print("Update date_end...")
+            print("Updating info...")
             db.update_old_cashbacks_date_end(cashback_scrapper.old_cashbacks)
+            
+            partnerships = db.get_partnerships()
+            last_cashbacks = db.get_last_cashbacks()
+            
+            cashback_scrapper.set_partnerships(partnerships)
+            cashback_scrapper.set_old_cashbacks(last_cashbacks)
+            
             last_update_time = current_time
             
     except KeyboardInterrupt:

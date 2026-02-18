@@ -2,15 +2,14 @@
 from utils import timer
 
 class CashbackScraper:
-    def __init__(self, partnerships, platforms, cashbacks=None):
-        self.partnerships = partnerships
+    def __init__(self, partnerships, platforms, old_cashbacks):
+        self.partnerships = {"partnership_id": {"partnership"}}
         self.platforms = {"platform_name": "PlatformClass"}
+        self.old_cashbacks = {"partnership_id": {"cashback_info"}}
         
-        self.old_cashbacks = {}
-        if cashbacks:
-            self.old_cashbacks = cashbacks
-        
+        self.set_partnerships(partnerships)
         self.set_platforms(platforms)
+        self.set_old_cashbacks(old_cashbacks)
     
     @timer
     def get_new_cashbacks(self):
@@ -37,12 +36,19 @@ class CashbackScraper:
     def scrap_all_cashbacks(self):
         cashbacks = {}
         
-        for partnership_id, partnership in self.partnerships.items():            
+        total_partnerships = len(self.partnerships)
+        
+        partnership_count = 0
+        for partnership_id, partnership in self.partnerships.items(): 
+            partnership_count += 1
+            print(f"\r{partnership_count}/{total_partnerships}", end="")
+                      
             cashback = self.scrap_cashback(partnership)
             if cashback:
                 cashback["partnership_id"] = partnership_id
             cashbacks[partnership_id] = cashback
-            
+        
+        print()
         return cashbacks
     
     def scrap_cashback(self, partnership):
@@ -63,6 +69,12 @@ class CashbackScraper:
         for platform in platforms:
             platform_name = platform.NAME.lower()
             self.platforms[platform_name] = platform
+            
+    def set_partnerships(self, partnerships):
+        self.partnerships = partnerships
+        
+    def set_old_cashbacks(self, old_cashbacks):
+        self.old_cashbacks = old_cashbacks
     
     def _get_platform(self, store_name):
         store_name = store_name.lower()
