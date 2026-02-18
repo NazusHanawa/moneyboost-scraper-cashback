@@ -52,17 +52,21 @@ class CashbackScraper:
         return cashbacks
     
     def scrap_cashback(self, partnership):
-        platform_name = partnership["platform_name"]
-        
-        if not partnership["partnership_url"]:
-            return None
+        try:
+            platform_name = partnership["platform_name"]
+            
+            if not partnership["partnership_url"]:
+                return None
 
-        platform = self._get_platform(platform_name)
-        if not platform:
+            platform = self._get_platform(platform_name)
+            if not platform:
+                return None
+            
+            cashback = platform.scrap_cashback(partnership["partnership_url"])
+            return cashback
+        except Exception as e:
+            print(f"\nscrap_cashback erro: {e}")
             return None
-        
-        cashback = platform.scrap_cashback(partnership["partnership_url"])
-        return cashback
     
     def set_platforms(self, platforms): 
         self.platforms = {}
