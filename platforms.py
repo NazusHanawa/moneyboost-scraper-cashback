@@ -198,7 +198,30 @@ class MyCashBack(Platform):
     
     @classmethod
     def _get_description_selector(cls):
-        return "#retailerPage > div:nth-child(1) > div.ret > div > div > div.col-md-8.col-12.border-left > div > h3 > span > span > strong"
+        return "#retailerPage > div:nth-child(1) > div.ret > div > div > div.col-md-4.col-12 > div"
+
+    @classmethod
+    def _get_description(cls, soup):
+        selector = cls._get_description_selector()
+        element = soup.select_one(selector)
+        if not element:
+            return None
+
+        lines = []
+
+        for text in element.stripped_strings:
+            clean_text = text.replace('\xa0', ' ').strip()
+            
+            if not clean_text:
+                continue
+            if clean_text.startswith('*'):
+                continue
+                
+            lines.append(clean_text)
+            
+        description = " ".join(lines).strip()
+        
+        return description if len(description) > 2 else None
 
 class Letyshops(Platform):
     NAME = "Letyshops"
@@ -261,8 +284,8 @@ platforms_list = [
 
 if __name__ == "__main__":
     urls = [
-        "https://www.cuponomia.com.br/desconto/temu",
+        "https://www.mycashback.com.br/retailer/shein",
     ]
     for url in urls:
-        result = Cuponomia.scrap_cashback(url)
+        result = MyCashBack.scrap_cashback(url)
         print(f"\n{url} {result}")
