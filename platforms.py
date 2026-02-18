@@ -149,7 +149,7 @@ class Cuponomia(Platform):
     
     @classmethod
     def _get_global_value_selector(cls):
-        return "#middle > div.store_header.js-storeHeader.container > div.store_header__logo.js-storeLogo > aside > button > span"
+        return "#middle > div.store_header.js-storeHeader.container > div.store_header__logo.js-storeLogo"
     
     @classmethod
     def _get_description_selector(cls):
@@ -261,11 +261,8 @@ platforms_list = [
 
 if __name__ == "__main__":
     urls = [
-        "https://cashback.opera.com/br/shops/shopee",
-        "https://cashback.opera.com/br/shops/lg",
-        "https://cashback.opera.com/br/shops/casasbahia",
-        "https://cashback.opera.com/br/shops/aliexpress"
+        "https://www.cuponomia.com.br/desconto/temu",
     ]
     for url in urls:
-        result = Opera.scrap_cashback(url)
+        result = Cuponomia.scrap_cashback(url)
         print(f"\n{url} {result}")
