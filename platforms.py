@@ -284,7 +284,7 @@ platforms_list = [
 
 if __name__ == "__main__":
     urls = [
-        "https://www.mycashback.com.br/retailer/shein",
+        "https://www.mycashback.com.br/retailer/temu",
     ]
     for url in urls:
         result = MyCashBack.scrap_cashback(url)

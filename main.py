@@ -57,5 +57,13 @@ while True:
         
     except Exception as e:
         print(f"Main loop erro: {e}")
-        time.sleep(30)
+
+        if "stream not found" in str(e).lower() or "404" in str(e):
+            print("Reconecting DB...")
+            try:
+                db = DB(os.environ.get("DATABASE_URL"), os.environ.get("AUTH_TOKEN"))
+            except:
+                pass
+    
+        time.sleep(5)
         continue
