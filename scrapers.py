@@ -83,7 +83,7 @@ class CashbackScraper:
             self.partnerships[partnership_id] = partnership
         
     def set_old_cashbacks(self, old_cashbacks):
-        limit_time = datetime.now() + timedelta(hours=12)
+        tolerance_time = datetime.now() - timedelta(hours=12)
         
         self.old_cashbacks = {}
         for partnership_id, cashback in old_cashbacks.items():
@@ -91,11 +91,10 @@ class CashbackScraper:
                 continue
             
             date_end = datetime.strptime(cashback['date_end'], '%Y-%m-%d %H:%M:%S')
-            if date_end < limit_time:
+            if date_end < tolerance_time:
                 continue
             
             self.old_cashbacks[partnership_id] = cashback
-        
     
     def _get_platform(self, store_name):
         store_name = store_name.lower()

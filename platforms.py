@@ -52,7 +52,7 @@ class Platform:
     @classmethod
     def _get_basic_response(cls, url):
         headers = cls._get_headers()
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=15)
         return response
         
     @classmethod
@@ -72,7 +72,7 @@ class Platform:
                     except Exception as e:
                         pass
                     
-                    content = page.inner_html("body", timeout=5000) 
+                    content = page.inner_html("body", timeout=10000) 
                     
                     page.close()
                     context.close()
@@ -81,7 +81,7 @@ class Platform:
             
             return MockResponse(content)
         except Exception as e:
-            print(f"Playwright erro ({cls.NAME}): {e}")
+            # print(f"Playwright erro ({cls.NAME}): {e}")
             return None
         
     @classmethod
