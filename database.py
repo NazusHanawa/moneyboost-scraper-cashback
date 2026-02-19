@@ -31,7 +31,7 @@ class DB:
     
     @timer
     def get_last_cashbacks(self):
-        result = self.cursor.execute("SELECT partnership_id, global_value, max_value FROM vw_latest_cashbacks")
+        result = self.cursor.execute("SELECT partnership_id, global_value, max_value, date_end FROM vw_latest_cashbacks")
         
         columns = [column[0] for column in result.description]
         

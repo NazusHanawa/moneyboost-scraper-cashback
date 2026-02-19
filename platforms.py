@@ -72,7 +72,7 @@ class Platform:
                     except Exception as e:
                         pass
                     
-                    content = page.inner_html("body") 
+                    content = page.inner_html("body", timeout=5000) 
                     
                     page.close()
                     context.close()
